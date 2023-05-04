@@ -3,7 +3,18 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 
 void main() {
-  runApp(ARWebView(url: 'https://webarvsar.web.app'));
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: ARWebView(url: 'https://webarvsar.web.app'),
+    );
+  }
 }
 
 class ARWebView extends StatefulWidget {
@@ -54,8 +65,7 @@ class _ARWebViewState extends State<ARWebView> {
     _arCoreController.onNodeTap = (name) => _onNodeTap(name);
   }
 
-  void _onNodeTap(String name) async {
-    await _webViewController.evaluateJavascript("document.getElementById('$name').click()");
+  void _onNodeTap(String name) {
+    _webViewController.evaluateJavascript("document.getElementById('$name').click()");
   }
 }
-

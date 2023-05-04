@@ -58,3 +58,4 @@ class _ARWebViewState extends State<ARWebView> {
     await _webViewController.evaluateJavascript("document.getElementById('$name').click()");
   }
 }
+

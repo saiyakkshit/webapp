@@ -3,7 +3,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Scaffold(
+      body: SafeArea(
+          child: WebView(
+            initialUrl: "https://webarvsar.web.app",
+            javascriptMode: JavascriptMode.unrestricted,
+          )),
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {

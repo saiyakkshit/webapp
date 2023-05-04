@@ -1,43 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: Scaffold(
       body: SafeArea(
-          child: WebView(
-            initialUrl: "https://webarvsar.web.app",
-            javascriptMode: JavascriptMode.unrestricted,
-          )),
+        child: MyApp(),
+      ),
     ),
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ARWebView(url: 'https://webarvsar.web.app'),
-    );
-  }
+  _MyAppState createState() => _MyAppState();
 }
 
-class ARWebView extends StatefulWidget {
-  final String url;
-
-  const ARWebView({required this.url});
-
-  @override
-  _ARWebViewState createState() => _ARWebViewState();
-}
-
-class _ARWebViewState extends State<ARWebView> {
-  late WebViewController _webViewController;
+class _MyAppState extends State<MyApp> {
   late ArCoreController _arCoreController;
+  InAppWebViewController? _webViewController;
 
   @override
   void dispose() {
@@ -53,11 +38,23 @@ class _ARWebViewState extends State<ARWebView> {
       ),
       body: Stack(
         children: [
-          WebView(
-            initialUrl: widget.url,
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
+          InAppWebView(
+            initialUrlRequest: URLRequest(
+              url: Uri.parse("https://webarvsar.web.app"),
+            ),
+            initialOptions: InAppWebViewGroupOptions(
+              android: AndroidInAppWebViewOptions(
+                useWideViewPort: true,
+                javaScriptEnabled: true,
+              ),
+              ios: IOSInAppWebViewOptions(),
+              crossPlatform: InAppWebViewOptions(),
+            ),
+            onWebViewCreated: (InAppWebViewController webViewController) {
               _webViewController = webViewController;
+            },
+            onLoadStop: (controller, url) {
+              _arCoreController.resume();
             },
           ),
           ArCoreView(
@@ -75,6 +72,6 @@ class _ARWebViewState extends State<ARWebView> {
   }
 
   void _onNodeTap(String name) {
-    _webViewController.evaluateJavascript("document.getElementById('$name').click()");
+    _webViewController?.evaluateJavascript(source: "document.getElementById('$name').click();");
   }
 }
